@@ -2392,7 +2392,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Last update: 22 March, 2026</p>
+      <p class="date">Last update: 25 March, 2026</p>
     </div>
   </div>
   
@@ -2415,9 +2415,9 @@ window.Quarto = {
 <li>ROC curve and AUC</li>
 </ul>
 <p>How well does the Random Forest model separate non-Severe from Severe patients based on proteomic profiles?</p>
-<section id="import-required-libraries-packages" class="level4 unlisted unnumbered">
-<h4 class="unlisted unnumbered anchored" data-anchor-id="import-required-libraries-packages">Import Required Libraries-Packages</h4>
-<div id="63a92bbe" class="cell" data-execution_count="55">
+<section id="import-required-libraries-packages" class="level4">
+<h4 class="anchored" data-anchor-id="import-required-libraries-packages">Import Required Libraries-Packages</h4>
+<div id="63a92bbe" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -2427,7 +2427,7 @@ window.Quarto = {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.base <span class="im">import</span> BaseEstimator, TransformerMixin</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PowerTransformer</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> RepeatedStratifiedKFold</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (confusion_matrix, accuracy_score, roc_auc_score, roc_curve, auc, ConfusionMatrixDisplay, RocCurveDisplay, classification_report)</span>
@@ -2439,8 +2439,8 @@ window.Quarto = {
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="reproducibility" class="level4 unlisted unnumbered">
-<h4 class="unlisted unnumbered anchored" data-anchor-id="reproducibility">Reproducibility</h4>
+<section id="reproducibility" class="level4">
+<h4 class="anchored" data-anchor-id="reproducibility">Reproducibility</h4>
 <div id="902312f2" class="cell" data-execution_count="56">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set global seeds for reproducibility</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)</span>
@@ -2938,11 +2938,11 @@ Names of these proteins:
 <li><code>StandardScaler</code>: Centres to mean=0 and scales to unit variance (not necessary for RF model)</li>
 <li><code>RandomForestClassifier</code>: Ensemble tree classifier</li>
 </ul>
-<div id="4a239123" class="cell" data-execution_count="77">
+<div id="4a239123" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define pipeline</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;imputer&#39;</span>, MinProbImputer(q<span class="op">=</span><span class="fl">0.01</span>, scale<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>)),</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;vst&#39;</span>, PowerTransformer(method<span class="op">=</span><span class="st">&#39;yeo-johnson&#39;</span>)),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;scaler&#39;</span>,  StandardScaler()),</span>
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;clf&#39;</span>, RandomForestClassifier(random_state<span class="op">=</span><span class="dv">42</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>))</span>
 <span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
